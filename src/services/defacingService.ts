@@ -7,6 +7,8 @@ interface DefacingResult {
   data?: {
     processedFileUrl: string;
     originalFileUrl: string;
+    previewImageUrl?: string;
+    previewPngUrl?: string;
   };
 }
 
@@ -41,12 +43,17 @@ export class DefacingService {
       const data = await response.json();
       this.logger.info('Backend processing completed successfully', {
         processedFileUrl: data.processedFileUrl,
-        originalFileUrl: data.originalFileUrl
+        originalFileUrl: data.originalFileUrl,
+        previewImageUrl: data.previewImageUrl
       });
 
       // Log the NIfTI file details
       if (data.processedFileUrl) {
         this.logger.info('NIfTI file available at:', data.processedFileUrl);
+      }
+      // Log the PNG preview if available
+      if (data.previewImageUrl) {
+        this.logger.info('PNG preview available at:', data.previewImageUrl);
       }
 
       return {

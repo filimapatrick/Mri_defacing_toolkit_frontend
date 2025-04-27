@@ -3,9 +3,10 @@ import React from 'react';
 interface ImagePreviewProps {
   fileId: string;
   fileName: string;
+  previewPngUrl?: string;
 }
 
-export const ImagePreview: React.FC<ImagePreviewProps> = ({ fileId, fileName }) => {
+export const ImagePreview: React.FC<ImagePreviewProps> = ({ fileId, fileName, previewPngUrl }) => {
   // In a real application, we would fetch actual image data
   // Here we're using placeholder images for demonstration
   
@@ -26,7 +27,7 @@ export const ImagePreview: React.FC<ImagePreviewProps> = ({ fileId, fileName }) 
           <div className="text-xs text-gray-500 mb-1">Processed (Anonymized & Defaced)</div>
           <div className="bg-gray-100 rounded aspect-square flex items-center justify-center overflow-hidden">
             <img 
-              src={`https://images.pexels.com/photos/4226896/pexels-photo-4226896.jpeg?auto=compress&cs=tinysrgb&w=300&blur=10`} 
+              src={previewPngUrl || `https://images.pexels.com/photos/4226896/pexels-photo-4226896.jpeg?auto=compress&cs=tinysrgb&w=300&blur=10`} 
               alt={`Processed scan`}
               className="max-w-full max-h-full object-contain"
             />

@@ -7,7 +7,9 @@ import { Footer } from './components/Footer';
 import { Homepage } from './components/Homepage';
 import { DefacingService } from './services/defacingService';
 import { Logger } from './services/logger';
-
+import About from './components/About';
+import Documentation from './components/Documentation';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 
 function App() {
   const [showUploader, setShowUploader] = useState(false);
@@ -22,6 +24,8 @@ function App() {
     message?: string;
     processedFileUrl?: string;
     originalFileUrl?: string;
+    previewImageUrl?: string;
+    previewPngUrl?: string;
   }>>([]);
   const [selectedTemplate, setSelectedTemplate] = useState('MNI-152');
   const [previewMode, setPreviewMode] = useState(true);
@@ -50,8 +54,17 @@ function App() {
             logger.info('File processed successfully:', {
               fileName: file.name,
               processedFileUrl: result.data?.processedFileUrl,
-              originalFileUrl: result.data?.originalFileUrl
+              originalFileUrl: result.data?.originalFileUrl,
+              previewPngUrl: result.data?.previewPngUrl
             });
+            if (result.data?.previewPngUrl) {
+              logger.info('PNG preview available at:', result.data.previewPngUrl);
+              // Example: Uncomment below to display the image in the document body
+              // const img = document.createElement('img');
+              // img.src = result.data.previewPngUrl;
+              // img.alt = 'Defaced MRI Preview';
+              // document.body.appendChild(img);
+            }
           } else {
             logger.error('File processing failed:', {
               fileName: file.name,
@@ -62,12 +75,13 @@ function App() {
           return {
             id: Math.random().toString(36).substring(2, 11),
             originalName: file.name,
-            status: result.success ? 'success' : 'error',
+            status: result.success ? ('success' as const) : ('error' as const),
             anonymized: result.success,
             defaced: result.success,
             message: result.message,
             processedFileUrl: result.data?.processedFileUrl,
-            originalFileUrl: result.data?.originalFileUrl
+            originalFileUrl: result.data?.originalFileUrl,
+            previewPngUrl: result.data?.previewPngUrl
           };
         })
       );
@@ -98,51 +112,58 @@ function App() {
   };
   
   return (
-    <div className="min-h-screen flex flex-col bg-gray-50">
-      <Header />
-      
-      <main className="flex-grow">
-        {showUploader ? (
-          <div className="container mx-auto px-4 py-8">
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-              <div className="lg:col-span-1">
-                <div className="bg-white rounded-lg shadow p-6 mb-8">
-                  <FileUploader 
-                    onFilesSelected={handleFilesSelected} 
-                    acceptedTypes={['.dcm']}
-                    files={files}
-                  />
-                </div>
-                
-                <div className="bg-white rounded-lg shadow p-6">
-                  <ProcessingOptions 
-                    selectedTemplate={selectedTemplate}
-                    setSelectedTemplate={setSelectedTemplate}
-                    previewMode={previewMode}
-                    setPreviewMode={setPreviewMode}
-                    onProcessFiles={handleProcessFiles}
-                    isProcessing={isProcessing}
-                    fileCount={files.length}
-                  />
-                </div>
-              </div>
-              
-              <div className="lg:col-span-2">
-                <Dashboard 
-                  processedFiles={processedFiles}
-                  onClearProcessed={handleClearProcessed}
-                  previewMode={previewMode}
-                />
-              </div>
-            </div>
-          </div>
-        ) : (
-          <Homepage onGetStarted={() => setShowUploader(true)} />
-        )}
-      </main>
-      
-      <Footer />
-    </div>
+    <Router>
+      <div className="min-h-screen flex flex-col bg-gray-50">
+        <Header />
+        <main className="flex-grow">
+          <Routes>
+            <Route path="/about" element={<About />} />
+            <Route path="/docs" element={<Documentation />} />
+            <Route
+              path="/"
+              element={
+                showUploader ? (
+                  <div className="container mx-auto px-4 py-8">
+                    <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                      <div className="lg:col-span-1">
+                        <div className="bg-white rounded-lg shadow p-6 mb-8">
+                          <FileUploader 
+                            onFilesSelected={handleFilesSelected} 
+                            acceptedTypes={['.dcm']}
+                            files={files}
+                          />
+                        </div>
+                        <div className="bg-white rounded-lg shadow p-6">
+                          <ProcessingOptions 
+                            selectedTemplate={selectedTemplate}
+                            setSelectedTemplate={setSelectedTemplate}
+                            previewMode={previewMode}
+                            setPreviewMode={setPreviewMode}
+                            onProcessFiles={handleProcessFiles}
+                            isProcessing={isProcessing}
+                            fileCount={files.length}
+                          />
+                        </div>
+                      </div>
+                      <div className="lg:col-span-2">
+                        <Dashboard 
+                          processedFiles={processedFiles}
+                          onClearProcessed={handleClearProcessed}
+                          previewMode={previewMode}
+                        />
+                      </div>
+                    </div>
+                  </div>
+                ) : (
+                  <Homepage onGetStarted={() => setShowUploader(true)} />
+                )
+              }
+            />
+          </Routes>
+        </main>
+        <Footer />
+      </div>
+    </Router>
   );
 }
 

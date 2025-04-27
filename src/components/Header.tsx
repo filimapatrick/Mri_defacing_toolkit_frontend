@@ -1,5 +1,6 @@
 import React from 'react';
-import { BrainCircuit } from 'lucide-react';
+import { BrainCircuit, Shield, Lock, Code, Database, Users, Award, Building2, Cpu, Layers, Zap, FileText } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 export const Header: React.FC = () => {
   return (
@@ -16,9 +17,9 @@ export const Header: React.FC = () => {
           
           <nav className="hidden md:block">
             <ul className="flex space-x-6">
-              <li><a href="#" className="hover:text-blue-200 transition-colors">Home</a></li>
-              <li><a href="#" className="hover:text-blue-200 transition-colors">Documentation</a></li>
-              <li><a href="#" className="hover:text-blue-200 transition-colors">About</a></li>
+              <li><Link to="/" className="hover:text-blue-200 transition-colors">Home</Link></li>
+              <li><Link to="/docs" className="hover:text-blue-200 transition-colors">Documentation</Link></li>
+              <li><Link to="/about" className="hover:text-blue-200 transition-colors">About</Link></li>
             </ul>
           </nav>
         </div>

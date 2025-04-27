@@ -10,6 +10,7 @@ interface ProcessedFile {
   defaced: boolean;
   processedFileUrl?: string;
   originalFileUrl?: string;
+  previewPngUrl?: string;
 }
 
 interface DashboardProps {
@@ -73,18 +74,15 @@ export const Dashboard: React.FC<DashboardProps> = ({
                 </div>
                 
                 <div className="flex space-x-2">
-                  {file.status === 'success' && (
-                    <button 
-                      onClick={() => {
-                        if (file.processedFileUrl) {
-                          window.open(file.processedFileUrl, '_blank');
-                        }
-                      }}
+                  {file.status === 'success' && file.processedFileUrl && (
+                    <a 
+                      href={file.processedFileUrl}
+                      download
                       className="text-blue-600 hover:text-blue-800 transition-colors"
                       title="Download processed file"
                     >
                       <Download size={18} />
-                    </button>
+                    </a>
                   )}
                   <button 
                     onClick={() => {
@@ -99,10 +97,14 @@ export const Dashboard: React.FC<DashboardProps> = ({
                   </button>
                 </div>
               </div>
-              
+              {/* {console.log(file.previewPngUrl,'file.previewPngUrl')} */}
               {previewMode && file.status === 'success' && (
                 <div className="px-4 pb-4">
-                  <ImagePreview fileId={file.id} fileName={file.originalName} />
+                  <ImagePreview 
+                    fileId={file.id} 
+                    fileName={file.originalName} 
+                    previewPngUrl={file.previewPngUrl}
+                  />
                 </div>
               )}
               
